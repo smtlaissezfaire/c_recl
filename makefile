@@ -3,4 +3,4 @@ all:
 	gcc repl.c -o bin/repl -W -Wall -std=c99
 
 clean:
-	rm -rf repl
+	rm -rf bin
