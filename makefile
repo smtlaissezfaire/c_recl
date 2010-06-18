@@ -1,5 +1,6 @@
 all:
-	gcc repl.c -o repl -W -Wall -std=c99
+	mkdir -p bin && \
+	gcc repl.c -o bin/repl -W -Wall -std=c99
 
 clean:
 	rm -rf repl
