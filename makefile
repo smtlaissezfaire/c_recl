@@ -4,3 +4,6 @@ all:
 
 clean:
 	rm -rf bin
+
+run: all
+	bin/repl
