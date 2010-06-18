@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "repl.h"
 
 int main() {
   print_intro();
 
   for (;;) {
-    print(eval(read()));
+    print(eval(repl_read()));
   }
   return 0;
 }
@@ -17,38 +18,58 @@ void print_intro() {
   puts("type .break to restart the repl, Ctrl-C to quit");
 }
 
-char * read() {
-  char *str = malloc(100);
+char * repl_read() {
+  char *str = malloc(1000);
+
   printf("> ");
-  scanf("%s", str);
+  fgets(str, 1000, stdin);
+
   return str;
 }
 
 char * eval(char *str) {
-  return str;
+  if (!strcmp(str, ".break")) {
+    return NULL;
+  } else {
+    return compile(str);
+  }
 }
 
 void print(char *str) {
-  puts(compile(str));
+  if (str) {
+    puts(str);
+  }
 }
 
 char * compile(char *str) {
+  printf("about to compile str: %s\n", str);
+
   char * src_filename = tmpnam(NULL);
-  char * bin = tmpnam(NULL);
-  FILE *fp = fopen(src_filename, "w");
-  char * cmd = mk_command(src_filename, bin);
+  FILE * fp = fopen(src_filename, "w");
+  char bin[strlen(src_filename) + 4];
+  int success = 0;
+  char * cmd;
+
+  strcpy(bin, src_filename);
+  strcat(bin, ".out");
+  cmd = mk_command(src_filename, bin);
 
   if (fp) {
-    if (system(cmd)) {
-      printf("executed command: %s", cmd);
-    } else {
-      return NULL;
+    printf("executing command: %s\n", cmd);
+
+    if (!system(cmd)) {
+      success = 1;
     }
-    fclose(fp);
   } else {
     fprintf(stderr, "Could not open file with filename %s", src_filename);
+    fclose(fp);
   }
-  return str;
+
+  if (success) {
+    return str;
+  } else {
+    return NULL;
+  }
 }
 
 char * mk_command(char *src, char *bin) {
@@ -56,8 +77,8 @@ char * mk_command(char *src, char *bin) {
 
   strcat(str, "gcc ");
   strcat(str, src);
-  strcat(str, " -o ");
-  strcat(str, bin);
+  // strcat(str, " -o ");
+  // strcat(str, bin);
 
   return str;
 }

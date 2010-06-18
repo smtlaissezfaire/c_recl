@@ -1,6 +1,6 @@
 int main();
 void print_intro();
-char * read();
+char * repl_read();
 char * eval(char *);
 void print(char *);
 char * compile(char *);
