@@ -12,12 +12,15 @@ char line[MAX_BUF_LENGTH];
 #define CLEAR_LINE(x) (strcpy((x), ""))
 
 int main() {
+  int run = 1;
+
   print_intro();
 
-  for (;;) {
+  do {
     repl_read();
-    eval();
-  }
+    run = eval();
+  } while(run);
+
   return 0;
 }
 
@@ -32,7 +35,11 @@ void repl_read() {
   fgets(line, MAX_BUF_LENGTH, stdin);
 }
 
-void eval() {
+int eval() {
+  if (!strcmp(line, ".exit\n")) {
+    return 0;
+  }
+
   if (!strcmp(line, ".break\n")) {
     CLEAR_LINE(buffer);
   } else if (!strcmp(line, ".\n")) {
@@ -40,6 +47,8 @@ void eval() {
   } else {
     strcat(buffer, line);
   }
+
+  return 1;
 }
 
 void compile(char *str) {

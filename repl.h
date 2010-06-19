@@ -1,7 +1,7 @@
 int main();
 void print_intro();
 void repl_read();
-void eval();
+int eval();
 void print(char *);
 void compile(char *);
 char * build_source_name();
