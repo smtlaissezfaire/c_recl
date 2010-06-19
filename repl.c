@@ -8,7 +8,7 @@ int main() {
   print_intro();
 
   for (;;) {
-    print(eval(repl_read()));
+    eval(repl_read());
   }
   return 0;
 }
@@ -35,35 +35,24 @@ char * eval(char *str) {
   }
 }
 
-void print(char *str) {
-  if (str) {
-    puts(str);
-  }
-}
-
 char * compile(char *str) {
-  printf("about to compile str: %s\n", str);
-
-  char * src_filename = tmpnam(NULL);
-  FILE * fp = fopen(src_filename, "w");
-  char bin[strlen(src_filename) + 4];
+  char * src_filename = strcat(tmpnam(NULL), ".c");
+  char * bin = strcat(src_filename, ".o");
+  char * cmd = mk_command(src_filename, bin);
+  FILE * fp;
   int success = 0;
-  char * cmd;
 
-  strcpy(bin, src_filename);
-  strcat(bin, ".out");
-  cmd = mk_command(src_filename, bin);
-
-  if (fp) {
-    printf("executing command: %s\n", cmd);
+  if (fp = fopen(src_filename, "w")) {
+    fprintf(fp, str);
+    fclose(fp);
 
     if (!system(cmd)) {
       success = 1;
     }
   } else {
     fprintf(stderr, "Could not open file with filename %s", src_filename);
-    fclose(fp);
   }
+
 
   if (success) {
     return str;
@@ -77,8 +66,8 @@ char * mk_command(char *src, char *bin) {
 
   strcat(str, "gcc ");
   strcat(str, src);
-  // strcat(str, " -o ");
-  // strcat(str, bin);
+  strcat(str, " -o ");
+  strcat(str, bin);
 
   return str;
 }
