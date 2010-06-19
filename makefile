@@ -1,15 +1,15 @@
 all:
 	mkdir -p bin && \
-	gcc repl.c -o bin/repl -W -Wall -std=c99 -g
+	gcc recl.c -o bin/recl -W -Wall -std=c99 -g
 
 debug: all
-	gdb bin/repl
+	gdb bin/recl
 
 clean:
 	rm -rf bin
 
 run: all
-	bin/repl
+	bin/recl
 
 install: all
-	sudo cp bin/repl /usr/local/bin/c_repl
+	sudo cp bin/recl /usr/local/bin/c_recl
