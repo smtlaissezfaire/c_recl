@@ -10,3 +10,6 @@ clean:
 
 run: all
 	bin/repl
+
+install: all
+	sudo cp bin/repl /usr/local/bin/c_repl
