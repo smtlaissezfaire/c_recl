@@ -26,7 +26,10 @@ int main() {
 
 void print_intro() {
   puts("Welcome to the C repl");
-  puts("type .break to restart the repl, '.' to compile, and Ctrl-C to quit");
+  puts("type .break to restart the repl,");
+  puts("     .      to compile");
+  puts("     .list  to list the current source code");
+  puts("     .exit  to quit");
 }
 
 void repl_read() {
@@ -40,7 +43,9 @@ int eval() {
     return 0;
   }
 
-  if (!strcmp(line, ".break\n")) {
+  if (!strcmp(line, ".list\n")) {
+    puts(buffer);
+  } else if (!strcmp(line, ".break\n")) {
     CLEAR_LINE(buffer);
   } else if (!strcmp(line, ".\n")) {
     compile(buffer);
