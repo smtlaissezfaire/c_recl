@@ -19,7 +19,7 @@ void print_intro() {
 }
 
 char * repl_read() {
-  char *str = malloc(1000);
+  char *str = calloc(1000, sizeof(char));
 
   printf("> ");
   fgets(str, 1000, stdin);
@@ -36,14 +36,14 @@ char * eval(char *str) {
 }
 
 char * compile(char *str) {
-  char * src_filename = strcat(tmpnam(NULL), ".c");
-  char * bin = strcat(src_filename, ".o");
+  char * src_filename = build_source_name();
+  char * bin = build_bin_name(src_filename);
   char * cmd = mk_command(src_filename, bin);
   FILE * fp;
   int success = 0;
 
-  if (fp = fopen(src_filename, "w")) {
-    fprintf(fp, str);
+  if ((fp = fopen(src_filename, "w"))) {
+    fprintf(fp, "%s", str);
     fclose(fp);
 
     if (!system(cmd)) {
@@ -53,7 +53,6 @@ char * compile(char *str) {
     fprintf(stderr, "Could not open file with filename %s", src_filename);
   }
 
-
   if (success) {
     return str;
   } else {
@@ -61,13 +60,34 @@ char * compile(char *str) {
   }
 }
 
-char * mk_command(char *src, char *bin) {
-  char * str = malloc(1000);
+char * build_source_name() {
+  char *name = tmpnam(NULL);
+  char *src = malloc(sizeof(char) * strlen(name) + 3);
+  strcpy(src, name);
+  strcat(src, ".c");
+  return src;
+}
 
-  strcat(str, "gcc ");
-  strcat(str, src);
-  strcat(str, " -o ");
-  strcat(str, bin);
-
+char * build_bin_name(char *src) {
+  char *str = malloc(sizeof(src) + 3);
+  strcpy(str, src);
+  strcat(str, ".o");
   return str;
+}
+
+char * mk_command(char *src, char *bin) {
+  char *cmd;
+  char gcc_command[] = "gcc ";
+  char flags[] = " -o ";
+
+  // int strlenth = sizeof(char) * (strlen(gcc_command) + strlen(src) + strlen(flags) + strlen(bin) + 1);
+  int strlenth = 1000;
+
+  cmd = malloc(strlenth);
+  strcpy(cmd, gcc_command);
+  strcat(cmd, src);
+  strcat(cmd, flags);
+  strcat(cmd, bin);
+  puts(cmd);
+  return cmd;
 }
