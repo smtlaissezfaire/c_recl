@@ -9,7 +9,8 @@
 char buffer[MAX_BUF_LENGTH];
 char line[MAX_BUF_LENGTH];
 
-#define CLEAR_LINE(x) (strcpy((x), ""))
+#define CLEAR_LINE(x)       (strcpy((x), ""))
+#define CHECK_COMMAND(line, cmd) (!strcmp((line), (cmd)))
 
 int main() {
   int run = 1;
@@ -44,17 +45,17 @@ void repl_read() {
 }
 
 int eval() {
-  if (!strcmp(line, ".exit\n")) {
+  if (CHECK_COMMAND(line, ".exit\n")) {
     return 0;
   }
 
-  if (!strcmp(line, ".help\n")) {
+  if (CHECK_COMMAND(line, ".help\n")) {
     print_help();
-  } else if (!strcmp(line, ".list\n")) {
+  } else if (CHECK_COMMAND(line, ".list\n")) {
     puts(buffer);
-  } else if (!strcmp(line, ".break\n")) {
+  } else if (CHECK_COMMAND(line, ".break\n")) {
     CLEAR_LINE(buffer);
-  } else if (!strcmp(line, ".\n")) {
+  } else if (CHECK_COMMAND(line, ".\n")) {
     compile(buffer);
   } else {
     strcat(buffer, line);
