@@ -26,7 +26,7 @@ int main() {
 }
 
 void print_intro() {
-  puts("Welcome to the C repl");
+  puts("Welcome to the C recl (read-eval-compile loop)");
   print_help();
 }
 
