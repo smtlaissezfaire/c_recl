@@ -47,7 +47,6 @@ void compile(char *str) {
   char * bin = build_bin_name(src_filename);
   char * cmd = mk_command(src_filename, bin);
   FILE * fp;
-  int success = 0;
 
   if ((fp = fopen(src_filename, "w"))) {
     fprintf(fp, "%s", str);
