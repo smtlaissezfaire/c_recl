@@ -4,38 +4,45 @@
 #include <unistd.h>
 #include "repl.h"
 
+#define MAX_BUF_LENGTH 10000
+
+char buffer[MAX_BUF_LENGTH];
+char line[MAX_BUF_LENGTH];
+
+#define CLEAR_LINE(x) (strcpy((x), ""))
+
 int main() {
   print_intro();
 
   for (;;) {
-    eval(repl_read());
+    repl_read();
+    eval();
   }
   return 0;
 }
 
 void print_intro() {
   puts("Welcome to the C repl");
-  puts("type .break to restart the repl, Ctrl-C to quit");
+  puts("type .break to restart the repl, '.' to compile, and Ctrl-C to quit");
 }
 
-char * repl_read() {
-  char *str = calloc(1000, sizeof(char));
-
+void repl_read() {
+  CLEAR_LINE(line);
   printf("> ");
-  fgets(str, 1000, stdin);
-
-  return str;
+  fgets(line, MAX_BUF_LENGTH, stdin);
 }
 
-char * eval(char *str) {
-  if (!strcmp(str, ".break")) {
-    return NULL;
+void eval() {
+  if (!strcmp(line, ".break\n")) {
+    CLEAR_LINE(buffer);
+  } else if (!strcmp(line, ".\n")) {
+    compile(buffer);
   } else {
-    return compile(str);
+    strcat(buffer, line);
   }
 }
 
-char * compile(char *str) {
+void compile(char *str) {
   char * src_filename = build_source_name();
   char * bin = build_bin_name(src_filename);
   char * cmd = mk_command(src_filename, bin);
@@ -47,29 +54,23 @@ char * compile(char *str) {
     fclose(fp);
 
     if (!system(cmd)) {
-      success = 1;
+      system(bin);
     }
   } else {
     fprintf(stderr, "Could not open file with filename %s", src_filename);
-  }
-
-  if (success) {
-    return str;
-  } else {
-    return NULL;
   }
 }
 
 char * build_source_name() {
   char *name = tmpnam(NULL);
-  char *src = malloc(sizeof(char) * strlen(name) + 3);
+  char *src = malloc(sizeof(char) * (strlen(name) + 3));
   strcpy(src, name);
   strcat(src, ".c");
   return src;
 }
 
 char * build_bin_name(char *src) {
-  char *str = malloc(sizeof(src) + 3);
+  char *str = malloc(sizeof(char) * (strlen(src) + 3));
   strcpy(str, src);
   strcat(str, ".o");
   return str;
