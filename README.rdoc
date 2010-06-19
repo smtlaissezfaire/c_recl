@@ -1,0 +1,13 @@
+= c-recl
+
+It's a C based repl - except that it's not quite a REPL, since REPLs are for dynamic languages.
+
+It's more of a stupid RECL (read-eval-compile loop).
+
+Here's an example session:
+
+http://gist.github.com/445206
+
+== installation:
+
+type `make install`
